@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const CLIENT_ID = "07f45b95ceac490ba0871336604107e0"
 const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
+const REFRESH_URL = "http://localhost:8080/auth/refresh_token/"
 
 function App() {
 
@@ -30,7 +31,7 @@ function App() {
     } catch (error) {
       console.log(error);
       if (error.response.status === 401) {
-        window.localStorage.removeItem("token")
+        window.localStorage.removeItem("access-token")
       }
     }
     
@@ -77,28 +78,22 @@ function App() {
     }
   }
 
-  // const refreshToken = async () => {
-  //   try {
-  //     const response = await axios.post({
-  //       url: 'https://accounts.spotify.com/api/token',
-  //       headers: { 'Authorization': 'Basic ' + (CLIENT_ID + ':' + CLIENT_SECRET).toString('base64') },
-  //       form: {
-  //         grant_type: 'refresh_token',
-  //         refresh_token: window.localStorage.getItem("refresh-token")
-  //       },
-  //       json: true
-  //     });
-  //     const newAccessToken = response.data.access_token;
-  //     window.localStorage.setItem('token', newAccessToken);
-  //   } catch (error) {
-  //     // console.log('Error refreshing token:', window.localStorage.getItem("refresh-token"));
-  //   }
-  // };
-  
-  // // Refresh token every 10 minutes
-  // setInterval(() => {
-  //   refreshToken();
-  // }, 8 * 1000); // 10 minutes in milliseconds
+  // Call the /refresh_token endpoint every 8 minutes to get a new access token
+  setInterval(() => {
+    axios.get(REFRESH_URL, {
+      params: {
+        refresh_token: window.localStorage.getItem("refresh-token")
+      }
+    })
+    .then(response => {
+      // Update the access token in your app state or local storage
+      const newAccessToken = response.data.access_token;
+      window.localStorage.setItem("access-token", newAccessToken)
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }, 8 * 60 * 1000); // 8 minutes in milliseconds
 
   const [track, setTrack] = useState({});
   const [lyrics, setLyrics] = useState({});

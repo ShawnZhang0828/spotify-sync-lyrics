@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const querystring = require('querystring');
 var request = require('request'); 
+const cors = require('cors');
 
 const CLIENT_ID = "07f45b95ceac490ba0871336604107e0"
 const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
@@ -25,7 +26,6 @@ router.get('/callback', function(req, res) {
 
     // your application requests refresh and access tokens
     // after checking the state parameter
-    console.log(req.query.code);
     var code = req.query.code || null;
 
     var authOptions = {
@@ -58,8 +58,6 @@ router.get('/callback', function(req, res) {
           // console.log(body);
         });
 
-        // res.redirect("http://localhost:3000");
-
         // we can also pass the token to the browser to make requests from there
         res.redirect('http://localhost:3000/?' +
           querystring.stringify({
@@ -74,6 +72,31 @@ router.get('/callback', function(req, res) {
       });
     }
 );
+
+router.get('/refresh_token', function(req, res) {
+
+  var refresh_token = req.query.refresh_token;
+  var authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    headers: { 'Authorization': 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64') },
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: refresh_token
+    },
+    json: true
+  };
+
+  request.post(authOptions, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var access_token = body.access_token;
+      res.send({
+        'access_token': access_token
+      });
+    }
+  });
+});
+
+router.use(cors());
 
 
 module.exports = router;

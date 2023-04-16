@@ -7,8 +7,6 @@ const app = express();
 app.use('/auth', authController);
 app.use(cors());
 
-authController.use(cors());
-
 app.listen(8080, () => {
     console.log('Server running on port 8080');
 });
