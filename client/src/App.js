@@ -9,13 +9,13 @@ const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
 function App() {
 
   const getCurrentTrack = async () => {
-    if (window.localStorage.getItem("token") === null) {
+    if (window.localStorage.getItem("code") === null) {
       return;
     }
     try {
       const response = await axios.get("https://api.spotify.com/v1/me/player/currently-playing", {
         headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`
+          Authorization: `Bearer ${window.localStorage.getItem("access-token")}`
         },
       })
       if (response !== undefined) {
@@ -61,13 +61,12 @@ function App() {
         console.log("lyrics not found");
     }
     
-    
   }
 
   const getProgress = async () => {
     const response = await axios.get("https://api.spotify.com/v1/me/player/currently-playing", {
       headers: {
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`
+        Authorization: `Bearer ${window.localStorage.getItem("access-token")}`
       },
     })
     if (response) {

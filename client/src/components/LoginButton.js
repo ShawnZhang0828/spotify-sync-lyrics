@@ -1,6 +1,6 @@
-const LoginButton = ({ onClick, text }) => {
+const LoginButton = ({ onClick, text, href }) => {
   return (
-    <button onClick={onClick} className="login-btn"><a href={text}></a></button>
+    <button onClick={onClick} className="login-btn"><a href={href}>{text}</a></button>
   )
 }
 
