@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import Header from './components/Header';
+import Lyrics from './components/Lyrics';
 import axios from 'axios';
 
 function App() {
@@ -12,14 +13,30 @@ function App() {
     })
     if (response) {
       let trackName = response.data.item.name,
-          artistName = response.data.item.artists[0].name   // TODO: could be more than one artists
-      return { trackName, artistName }
+          artistName = response.data.item.artists[0].name,   // TODO: could be more than one artists
+          trackID = response.data.item.id
+      return { trackName, artistName, trackID }
     } else {
       return null;
     }
   }
 
+  const getLyrics = async () => {
+    const response = await axios.get(`https://spotify-lyric-api.herokuapp.com/?trackid=${track.trackID}`, {})
+    if (response) {
+      var lines = response.data.lines.map(lineObj => {
+        delete lineObj.endTimeMs;
+        delete lineObj.syllables;
+        return lineObj;
+      })
+      setLyrics(lines);
+    } else {
+      console.log("lyrics not found");
+    }
+  }
+
   const [track, setTrack] = useState({});
+  const [lyrics, setLyrics] = useState({});
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -31,9 +48,10 @@ function App() {
     return () => clearInterval(interval);
   }, [getCurrentTrack]);
 
-  const handleTrackChange = () => {
+  const handleTrackChange = async () => {
     // do something when the track changes
     console.log("new song: " + track.trackName + " from " + track.artistName);
+    await getLyrics();
   };
 
   useEffect(() => {
@@ -44,7 +62,7 @@ function App() {
 
   return (
     <div className="container">
-      <Header />
+      {lyrics.length > 0 ? <Lyrics lines={lyrics}/> : <Header />}
     </div>
   );
 }
