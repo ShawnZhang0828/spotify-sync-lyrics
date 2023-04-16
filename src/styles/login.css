@@ -7,9 +7,9 @@ h1 {
 }
 
 .login-btn {
-    width: 10%;
-    margin: 2% auto;
+    width: auto;
+    margin: 4% auto;
     font-size: 18px;
-    padding: 5px;
-    border-radius: 20px;
+    padding: 9px;
+    border-radius: 40px;
 }
