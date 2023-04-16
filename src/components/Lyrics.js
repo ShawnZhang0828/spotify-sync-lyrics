@@ -1,8 +1,10 @@
-function Lyrics({ lines }) {
+import "../styles/lyrics.css"
+
+function Lyrics({ lines, currentLineIndex, bg_img }) {
   return (
-    <div>
+    <div className="lyrics-container" style={{ backgroundImage: `url(${bg_img})` }}>
         {lines.map((line, index) => {
-            return <div key={index}>{line.words}</div>
+            return <div key={index} className={`lyrics-line ${currentLineIndex === index ? "current-line" : ""}`}>{line.words}</div>
         })}
     </div>
   )
