@@ -6,20 +6,31 @@ import axios from 'axios';
 function App() {
 
   const getCurrentTrack = async () => {
-    const response = await axios.get("https://api.spotify.com/v1/me/player/currently-playing", {
-      headers: {
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`
-      },
-    })
-    if (response !== undefined) {
-      let trackName = response.data.item.name,
-          artistName = response.data.item.artists[0].name,   // TODO: could be more than one artists
-          trackID = response.data.item.id,
-          trackImg = response.data.item.album.images[0].url
-      return { trackName, artistName, trackID, trackImg }
-    } else {
-      return null;
+    if (window.localStorage.getItem("token") === null) {
+      return;
     }
+    try {
+      const response = await axios.get("https://api.spotify.com/v1/me/player/currently-playing", {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`
+        },
+      })
+      if (response !== undefined) {
+        let trackName = response.data.item.name,
+            artistName = response.data.item.artists[0].name,   // TODO: could be more than one artists
+            trackID = response.data.item.id,
+            trackImg = response.data.item.album.images[0].url
+        return { trackName, artistName, trackID, trackImg }
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response.status === 401) {
+        window.localStorage.removeItem("token")
+      }
+    }
+    
   }
 
   const handleTrackChange = async () => {
@@ -118,7 +129,7 @@ function App() {
 
   return (
     <div className="container">
-      {lyrics.length > 0 ? <Lyrics lines={lyrics} currentLineIndex={currentLineIndex} bg_img={track.trackImg}/> : <Header />}
+      {lyrics.length > 0 ? <Lyrics lines={lyrics} currentLineIndex={currentLineIndex} bg_img={track.trackImg}/> : <Header initToken={window.localStorage.getItem("token")}/>}
     </div>
   );
 }

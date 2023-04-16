@@ -8,9 +8,9 @@ const REDIRECT_URI = "http://localhost:3000"
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 const RESPONSE_TYPE = "token"
 
-const Header = (props) => {
+const Header = ({ initToken }) => {
   
-  const [token, setToken] = useState("")
+  const [token, setToken] = useState(initToken)
 
   useEffect(() => {
     const hash = window.location.hash
