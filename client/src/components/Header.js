@@ -13,6 +13,9 @@ const Header = ({ props }) => {
 
   const logout = async () => {
     setCode("")
+    window.localStorage.removeItem("code")
+    window.localStorage.removeItem("access-token")
+    window.localStorage.removeItem("refresh_token")
   }
   
   const [code, setCode] = useState("")

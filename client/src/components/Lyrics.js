@@ -1,4 +1,6 @@
 import "../styles/lyrics.css"
+import ToolBar from "./ToolBar";
+
 
 function Lyrics({ lines, currentLineIndex, bg_img }) {
     var startIndex = Math.max(currentLineIndex - 2, 0);
@@ -15,11 +17,19 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
     }
 
     return (
-        <div className="lyrics-container" style={{ backgroundImage: `url(${bg_img})` }}>
-            {displayedLines.map((line, index) => {
-                const lineIndex = startIndex + index;
-                return <div key={index} className={`lyrics-line ${currentLineIndex === lineIndex ? "current-line" : ""}`}>{line.words}</div>
-            })}
+        <div className="lyrics-container-wrapper" style={{ backgroundImage: `url(${bg_img})` }}>
+            <ToolBar />
+            <div className="lyrics-container">
+                {displayedLines.map((line, index) => {
+                    const lineIndex = startIndex + index;
+                    const isCurrentLine = currentLineIndex === lineIndex ? "current-line" : "";
+                    const isFarLine = lineIndex < currentLineIndex - 1 ||  lineIndex > currentLineIndex + 1 ? "far-line" : "";
+                    return <div key={index} 
+                                className={`lyrics-line ${isCurrentLine} ${isFarLine}`}>
+                                    {line.words}
+                            </div>
+                })}
+            </div>
         </div>
     )
 }

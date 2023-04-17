@@ -11,6 +11,7 @@ const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 const LOGIN_REDIRECT = "http://localhost:8080/auth/callback"
 const RESPONSE_TYPE = "code"
 
+// perform login via spotify api
 router.get('/login', function(req, res) {
     res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
@@ -41,6 +42,7 @@ router.get('/callback', function(req, res) {
       json: true
     };
 
+    // post request for refresh and access token
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
@@ -54,11 +56,11 @@ router.get('/callback', function(req, res) {
         };
 
         // use the access token to access the Spotify Web API
-        request.get(options, (error, response, body) => {
+        // request.get(options, (error, response, body) => {
           // console.log(body);
-        });
+        // });
 
-        // we can also pass the token to the browser to make requests from there
+        // redirect back to the React fontend with requested access token and refresh token
         res.redirect('http://localhost:3000/?' +
           querystring.stringify({
             access_token: access_token,
@@ -73,6 +75,7 @@ router.get('/callback', function(req, res) {
     }
 );
 
+// refresh access token using spotify API
 router.get('/refresh_token', function(req, res) {
 
   var refresh_token = req.query.refresh_token;
@@ -96,7 +99,7 @@ router.get('/refresh_token', function(req, res) {
   });
 });
 
+// enable cors 
 router.use(cors());
-
 
 module.exports = router;
