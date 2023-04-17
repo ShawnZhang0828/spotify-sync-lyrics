@@ -3,8 +3,8 @@ import Header from './components/Header';
 import Lyrics from './components/Lyrics';
 import axios from 'axios';
 
-const CLIENT_ID = "07f45b95ceac490ba0871336604107e0"
-const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
+// const CLIENT_ID = "07f45b95ceac490ba0871336604107e0"
+// const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
 const REFRESH_URL = "http://localhost:8080/auth/refresh_token/"
 
 function App() {
@@ -37,9 +37,35 @@ function App() {
     
   }
 
+  const getProgress = async () => {
+    if (window.localStorage.getItem("code") === null) {
+      return;
+    }
+    try {
+      const response = await axios.get("https://api.spotify.com/v1/me/player/currently-playing", {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("access-token")}`
+        },
+      })
+      if (response !== undefined) {
+        let startTime = response.data.progress_ms
+        return startTime
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response.status === 401) {
+        window.localStorage.removeItem("access-token")
+      }
+    }
+  }
+
   const handleTrackChange = async () => {
     // do something when the track changes
     setCurrentLineIndex(0);
+    setCurrentTime(await getProgress());
+    setTractStartTime(Date.now());
     await getLyrics();
   };
 
@@ -56,78 +82,72 @@ function App() {
       } else {
         setLyrics([{startTimeMs: 0, words: " "}]);
         console.log("lyrics not found");
+        return null
       }
     } catch (error) {
         setLyrics([{startTimeMs: 0, words: " "}]);
         console.log("lyrics not found");
+        return null
     }
     
   }
 
-  const getProgress = async () => {
-    const response = await axios.get("https://api.spotify.com/v1/me/player/currently-playing", {
-      headers: {
-        Authorization: `Bearer ${window.localStorage.getItem("access-token")}`
-      },
-    })
-    if (response) {
-      let trackStatus = response.data.progress_ms
-      return trackStatus
-    } else {
-      return null;
-    }
-  }
-
-  // Call the /refresh_token endpoint every 8 minutes to get a new access token
-  setInterval(() => {
-    axios.get(REFRESH_URL, {
-      params: {
-        refresh_token: window.localStorage.getItem("refresh-token")
-      }
-    })
-    .then(response => {
+  const refreshToken = async () => {
+    console.log("refreshing token");
+    try {
+      let response = await axios.get(REFRESH_URL, {
+        params: {
+          refresh_token: window.localStorage.getItem("refresh-token")
+        }
+      })
       // Update the access token in your app state or local storage
       const newAccessToken = response.data.access_token;
       window.localStorage.setItem("access-token", newAccessToken)
-    })
-    .catch(error => {
+      console.log("successfully refreshed token");
+    } catch (error) {
       console.log(error);
-    });
-  }, 8 * 60 * 1000); // 8 minutes in milliseconds
+    }
+  }
 
   const [track, setTrack] = useState({});
-  const [lyrics, setLyrics] = useState({});
+  const [lyrics, setLyrics] = useState([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const newTrack = await getCurrentTrack();
-      if (newTrack && JSON.stringify(newTrack) !== JSON.stringify(track)) {
-        setTrack(newTrack);
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [getCurrentTrack]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [trackStartTime, setTractStartTime] = useState(0);
 
   useEffect(() => {
     if (Object.keys(track).length !== 0) {
       setCurrentLineIndex(0);
       handleTrackChange();
+      refreshToken();   // refresh the access token after every song
     }
   }, [track]);
 
   useEffect(() => {
-    if (lyrics.length > 0) {
-      const timer = setInterval(async () => {
-        const currentTime = await getProgress(); // Get the current time of the track
-        const index = lyrics.findIndex((line) => line.startTimeMs >= currentTime); // Find the index of the line with a start time greater than or equal to the current time
+    const fetchNewTrack = async () => {
+      const newTrack = await getCurrentTrack();
+      if (newTrack && JSON.stringify(newTrack) !== JSON.stringify(track)) {
+        setTrack(newTrack);
+      }
+    };
+
+    const intervalId = setInterval(() => {
+      // setCurrentTime(Date.now() - trackStartTime);
+      var progress = Date.now() - trackStartTime + currentTime;
+      if (track) {
+        const index = lyrics.findIndex((line) => line.startTimeMs >= progress); // Find the index of the line with a start time greater than or equal to the current time
         if (index !== -1 && index !== currentLineIndex) {
           setCurrentLineIndex(index > 0 ? index - 1 : 0);
         }
-      }, 300); // Check every 100 milliseconds
-      return () => clearTimeout(timer);
-    }
-  }, [lyrics, currentLineIndex]);
+      }
+      
+      // check for new track only every two seconds
+      if (progress % 2500 < 100) {
+        fetchNewTrack();
+      }
+    }, 100);
+    return () => clearInterval(intervalId);
+  }, [currentTime, lyrics]);
 
   return (
     <div className="container">
