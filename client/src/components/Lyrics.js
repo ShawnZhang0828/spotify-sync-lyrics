@@ -13,9 +13,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
     var displayedLines = lines.slice(startIndex, endIndex + 1);
     if (displayedLines.length === 0) {
         currentLineIndex = 2;
-        const myArray = Array.from({ length: 5 }, () => ({ startTimeMs: 0, words: "" }));
-        displayedLines = myArray;
-        displayedLines[2].words = "Lyrics Not Found.";
+        displayedLines = lines;
         startIndex = 0;     // display lyrics not found as bold font
     }
 

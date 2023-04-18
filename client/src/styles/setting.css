@@ -1,11 +1,19 @@
 .popup-wrapper {
-    padding-top: 3px;
+    padding-bottom: 3px;
     position: fixed;
     z-index: 2;
     width: 40%;
-    height: 40px;
-    background-color: rgba(224, 205, 245, 1);
+    height: 66px;
+    background-color: rgb(246, 246, 246, 0.5);
     border-radius: 10px;
+}
+
+.drag-area {
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: rgba(223, 217, 226, 0.8);
+    font-weight: bold;
 }
 
 .setting-wrapper {
@@ -13,6 +21,7 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    padding: 2px 0 2px;
 }
   
 .toggle-switch {
@@ -64,6 +73,6 @@
   
 .setting-name {
     position: relative;
-    top: 2px;
     font-size: small;
+    width: 120px;
 }

@@ -97,14 +97,15 @@ function App() {
         })
         setLyrics(lines);   // update lyrics
       } else {
-        // update lyrics to empty words if cannot find lyrics for the current track
-        setLyrics([{startTimeMs: 0, words: " "}]);
-        console.log("lyrics not found");
+        console.log(response);
         return null
       }
     } catch (error) {
-        setLyrics([{startTimeMs: 0, words: " "}]);
-        console.log("lyrics not found");
+        const emptyLyrics = Array.from({ length: 5 }, () => ({ startTimeMs: 0, words: "" }));
+        var lyrics = emptyLyrics;
+        lyrics[2].words = "Lyrics Not Found.";
+        setLyrics(lyrics);
+        console.log("lyrics not found 2");
         return null
     }
     
@@ -147,6 +148,7 @@ function App() {
 
   // general synchronization
   useEffect(() => {
+    console.log('in 1');
     // asynchronze function to fetch a new track
     const fetchNewTrack = async () => {
       const newTrack = await getCurrentTrack();
@@ -157,7 +159,8 @@ function App() {
 
     const intervalId = setInterval(async () => {
       // setCurrentTime(Date.now() - trackStartTime);
-      var progress = Date.now() - trackStartTime + currentTime - 1000;
+      var progress = Date.now() - trackStartTime + currentTime - 500;
+      console.log('in 2', currentTime);
       if (track) {
         const index = lyrics.findIndex((line) => line.startTimeMs >= progress); // Find the index of the line with a start time greater than or equal to the current time
         if (index !== -1 && index !== currentLineIndex) {
@@ -172,7 +175,11 @@ function App() {
 
       // correct synchronization every five seconds
       if (progress % 5000 < 100) {
-        setCurrentTime(await getProgress());
+        console.log("in 3");
+        let trackProgress = await getProgress();
+        if (trackProgress !== undefined) {
+          setCurrentTime(trackProgress);
+        }
         setTractStartTime(Date.now());
       }
     }, 100);
