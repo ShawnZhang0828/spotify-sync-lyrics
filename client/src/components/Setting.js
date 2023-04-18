@@ -1,12 +1,34 @@
 import Draggable from 'react-draggable';
 import '../styles/setting.css'
 
+import { useState } from "react";
+
 function Setting() {
 
     const handleHiraganaChange = (event) => {
-        console.log(event.target.checked);
-        window.localStorage.setItem("hiragana", event.target.checked)
+        if (!translate && event.target.checked) {
+            setHiragana(true)
+            console.log(event.target.checked);
+            window.localStorage.setItem("hiragana", event.target.checked)
+        } else {
+            setHiragana(false)
+            window.localStorage.setItem("hiragana", false)
+        }
     };
+
+    const handleTranslateChange = (event) => {
+        if (!hiragana && event.target.checked) {
+            setTranslate(true)
+            console.log(event.target.checked);
+            window.localStorage.setItem("translate", event.target.checked)
+        } else {
+            setTranslate(false)
+            window.localStorage.setItem("translate", false)
+        }
+    }
+
+    const [hiragana, setHiragana] = useState(false);
+    const [translate, setTranslate] = useState(false);
 
     return (
         <Draggable handle='.handle'>
@@ -19,7 +41,7 @@ function Setting() {
                 </label>
                 <label className='setting-wrapper' id='translate-wrapper'>
                     <span className='setting-name'>Translate Lyrics</span>
-                    <input className="toggle-checkbox" type="checkbox" onChange={() => {}}/>
+                    <input className="toggle-checkbox" type="checkbox" onChange={handleTranslateChange} checked={window.localStorage.getItem("translate") === 'true' ? true : false}/>
                     <div className="toggle-switch"></div>
                 </label>
             </div>

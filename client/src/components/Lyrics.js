@@ -63,31 +63,46 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                 currentHiraganas = convertedLines[currentLineIndex]
             var kanjiRect, left, width;
 
-            // console.log("Kanji =>", currentKanjis, "\nHiragana =>", currentHiraganas);
+            console.log("Kanji =>", currentKanjis, "\nHiragana =>", currentHiraganas);
             
-            
+            // pair each converted hiragana with kanji characters
             while (i < currentKanjis.length) {
                 var nextSameIndex = -1;
+                // first unmatch character is converted hiragana
                 if (currentKanjis[i] !== currentHiraganas[j]) {
-                    var unmatchSection = ""
                     // get the bounding box for the left Kanji character
                     kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                     left = kanjiRect.left;
-                    unmatchSection += currentHiraganas[j];
-                    while (j < currentHiraganas.length - 1 && currentHiraganas[j+1] !== currentKanjis[i]) {
-                        nextSameIndex = currentKanjis.indexOf(currentHiraganas[j+1], i+1);
-                        if (nextSameIndex === -1) {
-                            unmatchSection += currentHiraganas[j+1];
-                            j++;
+                    // find where the converted characters ends
+                    if (i === currentKanjis.length - 1) {
+                        kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
+                        width = kanjiRect.right - left;
+                        spans.push(createHiraganaSegment(currentHiraganas.slice(j), left, width));
+                        break;
+                    }
+                    while (i < currentKanjis.length - 1) {
+                        nextSameIndex = currentHiraganas.indexOf(currentKanjis[i+1], j+1);
+                        if (nextSameIndex === -1 && i !== currentKanjis.length - 2) {
+                            i++;
+                        } else if (i === currentKanjis.length - 2) {
+                            i++;
+                            kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
+                            width = kanjiRect.right - left;
+                            spans.push(createHiraganaSegment(currentHiraganas.slice(j), left, width));
+                            break;
                         } else {
-                            kanjiRect = kanjiRefs.current[nextSameIndex].getBoundingClientRect();
-                            width = kanjiRect.left - left;
-                            spans.push(createHiraganaSegment(unmatchSection, left, width))
+                            kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
+                            width = kanjiRect.right - left;
+                            console.log(width);
+                            spans.push(createHiraganaSegment(currentHiraganas.slice(j, nextSameIndex), left, width));
+                            j = nextSameIndex;
+                            i++;
                             break;
                         }
                     }
+                    
                 }
-                i = nextSameIndex === -1 ? i + 1 : nextSameIndex;
+                i++;
                 j++;
             }
         }

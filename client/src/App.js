@@ -148,7 +148,6 @@ function App() {
 
   // general synchronization
   useEffect(() => {
-    console.log('in 1');
     // asynchronze function to fetch a new track
     const fetchNewTrack = async () => {
       const newTrack = await getCurrentTrack();
@@ -160,7 +159,6 @@ function App() {
     const intervalId = setInterval(async () => {
       // setCurrentTime(Date.now() - trackStartTime);
       var progress = Date.now() - trackStartTime + currentTime - 500;
-      console.log('in 2', currentTime);
       if (track) {
         const index = lyrics.findIndex((line) => line.startTimeMs >= progress); // Find the index of the line with a start time greater than or equal to the current time
         if (index !== -1 && index !== currentLineIndex) {
@@ -175,7 +173,6 @@ function App() {
 
       // correct synchronization every five seconds
       if (progress % 5000 < 100) {
-        console.log("in 3");
         let trackProgress = await getProgress();
         if (trackProgress !== undefined) {
           setCurrentTime(trackProgress);
