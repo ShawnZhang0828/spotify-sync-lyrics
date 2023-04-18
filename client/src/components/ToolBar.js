@@ -1,3 +1,4 @@
+import Setting from "./Setting";
 import ToolButton from "./ToolButton"
 import { useState, useEffect } from "react";
 import axios from 'axios';
@@ -59,9 +60,14 @@ function ToolBar() {
         setLocked(false)
     }
 
+    const handleSettingClick = () => {
+        setShowSetting(showSetting ? !showSetting : true)
+    }
+
     const [showToolbar, setShowToolbar] = useState(false);
     const [locked, setLocked] = useState(false);
     const [playing, setPlaying] = useState(true);
+    const [showSetting, setShowSetting] = useState(false);
 
     useEffect(() => {
         setPlaying(window.localStorage.getItem("is-playing") === 'true')
@@ -73,10 +79,11 @@ function ToolBar() {
                 <ToolButton icon={faForward}/>
                 {!playing ? <ToolButton icon={faPlay} onClick={handlePlayClick}/> : <ToolButton icon={faPause} onClick={handlePauseClick}/>}
                 <ToolButton icon={faBackward}/>
-                <ToolButton icon={faGear}/>
+                <ToolButton icon={faGear} onClick={handleSettingClick}/>
                 {!locked ? <ToolButton icon={faLock} onClick={handleLockClick}/> : <ToolButton icon={faUnlock} onClick={handleUnlockClick}/>}
                 <ToolButton icon={faRightFromBracket}/>
             </div>
+            {showSetting && <Setting />}
         </div>
     )
 }
