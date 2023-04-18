@@ -21,13 +21,19 @@ function App() {
           Authorization: `Bearer ${window.localStorage.getItem("access-token")}`
         },
       })
-      if (response !== undefined) {
+      if (response !== undefined && response.status !== 204) {
         let trackName = response.data.item.name,
             artistName = response.data.item.artists[0].name,   // TODO: could be more than one artists
             trackID = response.data.item.id,
             trackImg = response.data.item.album.images[0].url
         return { trackName, artistName, trackID, trackImg }
-      } else {
+      } else if (response.status === 204) {      // return same track for a 204 (success no content error)
+        let trackName = track.trackName,
+            artistName = track.artistName,
+            trackID = track.trackID,
+            trackImg = track.trackImg
+        return { trackName, artistName, trackID, trackImg }
+      }else {
         return null;
       }
     } catch (error) {
@@ -53,9 +59,11 @@ function App() {
         },
       })
       if (response !== undefined) {
-        let startTime = response.data.progress_ms
+        let startTime = response.data.progress_ms   // get current progress
+        window.localStorage.setItem("is-playing", response.data.is_playing)
         return startTime
       } else {
+        window.localStorage.setItem("is-playing", "false")
         return null;
       }
     } catch (error) {
@@ -168,7 +176,7 @@ function App() {
       }
     }, 100);
     return () => clearInterval(intervalId);
-  }, [currentTime, lyrics]);
+  }, [currentTime, lyrics, trackStartTime]);
 
   // render page elements
   return (

@@ -6,7 +6,7 @@ const cors = require('cors');
 
 const CLIENT_ID = "07f45b95ceac490ba0871336604107e0"
 const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
-const SCOPE = "user-read-currently-playing"
+const SCOPE = "user-read-currently-playing user-modify-playback-state"
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 const LOGIN_REDIRECT = "http://localhost:8080/auth/callback"
 const RESPONSE_TYPE = "code"

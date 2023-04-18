@@ -2,6 +2,10 @@ div {
     text-align: center;
 }
 
+div:empty {
+    height: 20px;
+}
+
 .lyrics-line {
     font-size: medium;
     width: 100%;
