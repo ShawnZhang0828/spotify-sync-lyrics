@@ -84,6 +84,7 @@ function App() {
 
   // get lyrics of the current track
   const getLyrics = async () => {
+    // TODO: handle un-synced lyrics
     try {
       // send request to the spotify api
       const response = await axios.get(`https://spotify-lyric-api.herokuapp.com/?trackid=${track.trackID}`, {})
@@ -156,7 +157,7 @@ function App() {
 
     const intervalId = setInterval(async () => {
       // setCurrentTime(Date.now() - trackStartTime);
-      var progress = Date.now() - trackStartTime + currentTime;
+      var progress = Date.now() - trackStartTime + currentTime - 1000;
       if (track) {
         const index = lyrics.findIndex((line) => line.startTimeMs >= progress); // Find the index of the line with a start time greater than or equal to the current time
         if (index !== -1 && index !== currentLineIndex) {

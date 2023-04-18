@@ -22,9 +22,9 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
     const [hiragana, setHiragana] = useState(false);
     const [currentHiragana, setCurrentHiragana] = useState("");
     const [convertedLines, setConvertedLines] = useState("");
+    const [spanElements, setSpanElements] = useState([]);
     
     const kanjiRefs = useRef([]);
-    const hiraganaRefs = useRef([]);
 
     useEffect(() => {
         const getConvertedHiragana = async (line) => {
@@ -44,7 +44,6 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             )
 
             return convertedLines;
-            
         }
 
         if (window.localStorage.getItem('hiragana') === 'true') {
@@ -58,48 +57,90 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
     }, [window.localStorage.getItem('hiragana'), lines]);
 
     useEffect(() => {
-        if (hiragana) {
-            setCurrentHiragana(convertedLines[currentLineIndex])
+        const spans = [];
+
+        const getHiraganaSegments = () => {
+            var i = 0, j = 0;
+            var currentKanjis = lines[currentLineIndex].words, 
+                currentHiraganas = convertedLines[currentLineIndex]
+            var kanjiRect, left, width;
+
+            // console.log("Kanji =>", currentKanjis, "\nHiragana =>", currentHiraganas);
+            
+            
+            while (i < currentKanjis.length) {
+                var nextSameIndex = -1;
+                if (currentKanjis[i] !== currentHiraganas[j]) {
+                    var unmatchSection = ""
+                    // get the bounding box for the left Kanji character
+                    kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
+                    left = kanjiRect.left;
+                    unmatchSection += currentHiraganas[j];
+                    while (j < currentHiraganas.length - 1 && currentHiraganas[j+1] !== currentKanjis[i]) {
+                        nextSameIndex = currentKanjis.indexOf(currentHiraganas[j+1], i+1);
+                        if (nextSameIndex === -1) {
+                            unmatchSection += currentHiraganas[j+1];
+                            j++;
+                        } else {
+                            kanjiRect = kanjiRefs.current[nextSameIndex].getBoundingClientRect();
+                            width = kanjiRect.left - left;
+                            spans.push(createHiraganaSegment(unmatchSection, left, width))
+                            break;
+                        }
+                    }
+                }
+                i = nextSameIndex === -1 ? i + 1 : nextSameIndex;
+                j++;
+            }
         }
 
-        // TODO: 
-        kanjiRefs.current.forEach((kanjiRef, index) => {
-            const kanjiRect = kanjiRef.getBoundingClientRect();
-            const hiraganaRef = hiraganaRefs.current[index];
-            if (hiraganaRefs.current.length !== 0) {
-                console.log(currentHiragana);
-                hiraganaRef.style.top = `${kanjiRect.top}px`;
-                hiraganaRef.style.left = `${kanjiRect.left}px`;
-            }
-          });
-    }, [currentLineIndex, convertedLines]);
+        const createHiraganaSegment = (text, left, width) => {
+            const center = (left + width/2);
+            const span = (
+                <span
+                  className="hiragana-segment"
+                  style={{
+                    display: 'inline-block',
+                    left: `${left}px`,
+                    position: "absolute",
+                    transform: `translateX(-50%)`,
+                    left: `${center}px`,
+                    whiteSpace: 'nowrap'
+                  }}>
+                  {text}
+                </span>
+              );
+            return span
+        }
+
+        if (hiragana && convertedLines.length > 0) {
+            setCurrentHiragana(convertedLines[currentLineIndex])
+            getHiraganaSegments();
+            setSpanElements(spans);
+        }
+    }, [currentLineIndex, convertedLines, lines]);
 
 
 
     return (
         <div className="lyrics-container-wrapper" style={{ backgroundImage: `url(${bg_img})` }}>
             <ToolBar />
-            <div className="lyrics-container">
-                {hiragana ? 
-                    <div>
-                        {/* <div className={`lyrics-line current-line`}>{lines[currentLineIndex].words}</div> */}
-                        {currentHiragana.split('').map((char, index) => (
-                            <span
-                            key={index}
-                            ref={(ref) => (hiraganaRefs.current[index] = ref)}
-                            className="hiragana"
-                            >
-                            {char}
-                            </span>
-                        ))}
+            {hiragana ? 
+                <div className="kanji-hiragana-wrapper">
+                    <div className="char-wrapper" id="hiragana-char-wrapper">
+                        {spanElements.map((span) => span)}
+                    </div>
+                    
+                    <div className="char-wrapper" id="kanji-char-wrapper">
                         {lines[currentLineIndex].words.split('').map((char, index) => (
                             <span key={index} ref={(ref) => (kanjiRefs.current[index] = ref)}>
                             {char}
                             </span>
                         ))}
-                        <div className={`lyrics-line converted-hiragana`}>{currentHiragana}</div>
                     </div>
-                     : 
+                </div>
+                    : 
+                <div className="lyrics-container"> {
                     displayedLines.map((line, index) => {
                         const lineIndex = startIndex + index;
                         const isCurrentLine = currentLineIndex === lineIndex ? "current-line" : "";
@@ -108,10 +149,10 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                                     className={`lyrics-line ${isCurrentLine} ${isFarLine}`}>
                                         {line.words}
                                 </div>
-                    })
-                }
-                
-            </div>
+                        })
+                    }
+                </div>
+            }
         </div>
     )
 }

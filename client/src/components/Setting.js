@@ -6,13 +6,9 @@ import { useState } from "react";
 function Setting() {
 
     const handleHiraganaChange = (event) => {
-        setHiragana(event.target.checked);
-        // Call your function here or perform any other logic
         console.log(event.target.checked);
         window.localStorage.setItem("hiragana", event.target.checked)
     };
-
-    const [hiragana, setHiragana] = useState(false);
 
     return (
         <Draggable handle='.handle'>

@@ -36,3 +36,32 @@ div:empty {
 .lyrics-container {
     padding-top: 5px;
 }
+
+.kanji-hiragana-wrapper {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+}
+
+.hiragana-segment {
+    font-size: small;
+    font-weight: 800;
+}
+
+#hiragana-char-wrapper {
+    position: absolute;
+    top: 30%;
+}
+
+#kanji-char-wrapper {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    font-size: x-large;
+    font-weight: 900;
+    color: #7464b9;
+    text-shadow: 0.05em 0.05em #080611
+}
