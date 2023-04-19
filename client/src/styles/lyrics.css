@@ -65,3 +65,7 @@ div:empty {
     color: #7464b9;
     text-shadow: 0.05em 0.05em #080611
 }
+
+#translation-wrapper {
+    padding-top: 7%;
+}

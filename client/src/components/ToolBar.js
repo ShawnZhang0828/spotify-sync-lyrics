@@ -98,9 +98,9 @@ function ToolBar() {
     return (
         <div className="toolbar-wrapper" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
             <div className="toolbar" style={{display: showToolbar ? "flex" : "none"}}>
-                <ToolButton icon={faForward} onClick={handleNextClick}/>
-                {!playing ? <ToolButton icon={faPlay} onClick={handlePlayClick}/> : <ToolButton icon={faPause} onClick={handlePauseClick}/>}
                 <ToolButton icon={faBackward} onClick={handlePreviousClick}/>
+                {!playing ? <ToolButton icon={faPlay} onClick={handlePlayClick}/> : <ToolButton icon={faPause} onClick={handlePauseClick}/>}
+                <ToolButton icon={faForward} onClick={handleNextClick}/>
                 <ToolButton icon={faGear} onClick={handleSettingClick}/>
                 {!locked ? <ToolButton icon={faLock} onClick={handleLockClick}/> : <ToolButton icon={faUnlock} onClick={handleUnlockClick}/>}
                 <ToolButton icon={faRightFromBracket}/>

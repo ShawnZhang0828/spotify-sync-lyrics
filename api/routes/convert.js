@@ -1,24 +1,42 @@
-//TODO: finish up this route
 
 const Kuroshiro = require("kuroshiro")
 const KuromojiAnalyzer = require("kuroshiro-analyzer-kuromoji")
 
+const { translate } = require('@vitalets/google-translate-api');
 
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 
-const kuroshiro = new Kuroshiro()
+var HttpProxyAgent = require('http-proxy-agent');
 
+var agent = new HttpProxyAgent("http://137.184.245.154:80");
+
+const availableAgents = [
+    new HttpProxyAgent("http://137.184.245.154:80"),
+    new HttpProxyAgent("http://84.248.46.187:80"),
+    new HttpProxyAgent("http://4.233.217.172:80"),
+    new HttpProxyAgent("http://45.92.108.112:80"),
+    new HttpProxyAgent("http://185.162.251.76:80"),
+    new HttpProxyAgent("http://161.97.93.15:80"),
+    new HttpProxyAgent("http://34.75.202.63:80"),
+    new HttpProxyAgent("http://203.57.51.53:80"),
+    new HttpProxyAgent("http://139.99.135.214:80"),
+    new HttpProxyAgent("http://102.165.4.52:8001"),
+]
+
+const kuroshiro = new Kuroshiro()
 kuroshiro.init(new KuromojiAnalyzer())
 
 
-router.get('/line', async (req, res) => {
+router.get('/hiragana', async (req, res) => {
     const data = req.query.data;
     var result;
 
     try {
-        result = await kuroshiro.convert(data, { to: "hiragana" });
+        result = await kuroshiro.convert(data, {
+            to: "hiragana"
+         });
     } catch (error) {
         result = "converted failed at " + data; 
     }
@@ -29,7 +47,33 @@ router.get('/line', async (req, res) => {
 );
 
 // refresh access token using spotify API
-router.get('/refresh_token', function(req, res) {
+router.get('/translate', async (req, res) => {
+    const data = req.query.data;
+    var result;
+    var proxyID = 0;
+
+    const getResponseProxy = async (agent) => {
+        response = await translate(data, {
+            to: 'zh-cn',
+            fetchOptions: { agent }
+        });
+        return response;
+    }
+
+    while (proxyID < availableAgents.length) {
+        try {
+            const response = await getResponseProxy(availableAgents[proxyID]);
+            result = response;
+            break;
+        } catch (error) {
+            console.log(`Proxy ${proxies[i]} failed. Trying next proxy...`);
+            proxyID++;
+            continue;
+        }
+    }
+    
+    console.log(result);
+    res.send(result)
     }
 );
 

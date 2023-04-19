@@ -1,6 +1,6 @@
 const express = require('express');
 const authController = require('./routes/auth');
-const convertController = require('./routes/convert')
+const convertController = require('./routes/convert.js')
 const cors = require('cors');
 
 const app = express();

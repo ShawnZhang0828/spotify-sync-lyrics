@@ -18,8 +18,10 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
     }
 
     const [hiragana, setHiragana] = useState(false);
+    const [translate, setTranslate] = useState(false);
     const [currentHiragana, setCurrentHiragana] = useState("");
-    const [convertedLines, setConvertedLines] = useState("");
+    const [convertedLines, setConvertedLines] = useState([]);
+    const [translatedLines, setTranslatedLines] = useState(Array(lines.length).fill('Translation not available yet'));
     const [spanElements, setSpanElements] = useState([]);
     
     const kanjiRefs = useRef([]);
@@ -29,7 +31,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             const convertedLines = await Promise.all(
                 lines.map(async (line) => {
                     try {
-                        const response = await axios.get('http://localhost:8080/convert/line', {
+                        const response = await axios.get('http://localhost:8080/convert/hiragana', {
                             params: {
                               data: line.words,
                             },
@@ -63,7 +65,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                 currentHiraganas = convertedLines[currentLineIndex]
             var kanjiRect, left, width;
 
-            console.log("Kanji =>", currentKanjis, "\nHiragana =>", currentHiraganas);
+            // console.log("Kanji =>", currentKanjis, "\nHiragana =>", currentHiraganas);
             
             // pair each converted hiragana with kanji characters
             while (i < currentKanjis.length) {
@@ -74,17 +76,18 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                     kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                     left = kanjiRect.left;
                     // find where the converted characters ends
-                    if (i === currentKanjis.length - 1) {
+                    if (i === currentKanjis.length - 1) {           // special case where the last character is a Kanji
                         kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                         width = kanjiRect.right - left;
                         spans.push(createHiraganaSegment(currentHiraganas.slice(j), left, width));
                         break;
                     }
+                    // general case
                     while (i < currentKanjis.length - 1) {
                         nextSameIndex = currentHiraganas.indexOf(currentKanjis[i+1], j+1);
                         if (nextSameIndex === -1 && i !== currentKanjis.length - 2) {
                             i++;
-                        } else if (i === currentKanjis.length - 2) {
+                        } else if (nextSameIndex === -1 && i === currentKanjis.length - 2) {            // if the last several character are all Kanji
                             i++;
                             kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                             width = kanjiRect.right - left;
@@ -93,14 +96,12 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                         } else {
                             kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                             width = kanjiRect.right - left;
-                            console.log(width);
                             spans.push(createHiraganaSegment(currentHiraganas.slice(j, nextSameIndex), left, width));
                             j = nextSameIndex;
                             i++;
                             break;
                         }
                     }
-                    
                 }
                 i++;
                 j++;
@@ -133,13 +134,41 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
         }
     }, [currentLineIndex, convertedLines, lines]);
 
+    useEffect(() => {
+        const getTranslatedLyrics = async () => {
+            const connectedLyrics = lines.map(line => line.words).join('***')
+            console.log(connectedLyrics);
+            var response;
+            try {
+                response = await axios.get('http://localhost:8080/convert/translate', {
+                    params: {
+                        data: connectedLyrics,
+                    },
+                })
+                // return response.data
+            } catch (error) {
+                console.log(error);
+            }
+            setTranslatedLines(response.data.text.split("***"));
+            // console.log(response.data.text.split("***"));
+            // return translatedLines;
+        }
+
+        if (window.localStorage.getItem('translate') === 'true') {
+            getTranslatedLyrics();
+                // setTranslatedLines(translatedLines);
+        }
+
+        setTranslate(window.localStorage.getItem('translate') === 'true');
+    }, [window.localStorage.getItem('translate'), lines])
+
 
 
     return (
         <div className="lyrics-container-wrapper" style={{ backgroundImage: `url(${bg_img})` }}>
             <ToolBar />
             {hiragana ? 
-                <div className="kanji-hiragana-wrapper">
+                (<div className="kanji-hiragana-wrapper">
                     <div className="char-wrapper" id="hiragana-char-wrapper">
                         {spanElements.map((span) => span)}
                     </div>
@@ -151,9 +180,14 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                             </span>
                         ))}
                     </div>
-                </div>
-                    : 
-                <div className="lyrics-container"> {
+                </div>)
+             : translate ?
+                (<div className="lyrics-container" id="translation-wrapper">
+                    <div className="lyrics-line">{translatedLines[currentLineIndex]}</div>
+                    <div className="lyrics-line current-line">{lines[currentLineIndex].words}</div>
+                </div>)       
+             : 
+                (<div className="lyrics-container"> {
                     displayedLines.map((line, index) => {
                         const lineIndex = startIndex + index;
                         const isCurrentLine = currentLineIndex === lineIndex ? "current-line" : "";
@@ -164,7 +198,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                                 </div>
                         })
                     }
-                </div>
+                </div>)
             }
         </div>
     )

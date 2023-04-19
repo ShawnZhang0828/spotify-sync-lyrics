@@ -19,7 +19,6 @@ function Setting() {
     const handleTranslateChange = (event) => {
         if (!hiragana && event.target.checked) {
             setTranslate(true)
-            console.log(event.target.checked);
             window.localStorage.setItem("translate", event.target.checked)
         } else {
             setTranslate(false)
@@ -27,8 +26,8 @@ function Setting() {
         }
     }
 
-    const [hiragana, setHiragana] = useState(false);
-    const [translate, setTranslate] = useState(false);
+    const [hiragana, setHiragana] = useState(window.localStorage.getItem("hiragana"));
+    const [translate, setTranslate] = useState(window.localStorage.getItem("translate"));
 
     return (
         <Draggable handle='.handle'>
