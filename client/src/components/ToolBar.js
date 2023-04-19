@@ -6,7 +6,6 @@ import "../styles/toolbar.css"
 import { faPlay, faPause, faForward, faBackward, faGear, faLock, faUnlock, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 
-
 function ToolBar() {
 
     const handleMouseOver = () => {

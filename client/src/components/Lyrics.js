@@ -136,7 +136,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
 
     useEffect(() => {
         const getTranslatedLyrics = async () => {
-            const connectedLyrics = lines.map(line => line.words).join('***')
+            const connectedLyrics = lines.map(line => line.words).join('\n')
             console.log(connectedLyrics);
             var response;
             try {
@@ -149,7 +149,9 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             } catch (error) {
                 console.log(error);
             }
-            setTranslatedLines(response.data.text.split("***"));
+            var translated = response.data.text
+            console.log(translated);
+            setTranslatedLines(translated.split("\n"));
             // console.log(response.data.text.split("***"));
             // return translatedLines;
         }

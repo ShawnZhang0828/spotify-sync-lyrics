@@ -10,8 +10,9 @@ const cors = require('cors');
 
 var HttpProxyAgent = require('http-proxy-agent');
 
-var agent = new HttpProxyAgent("http://137.184.245.154:80");
+// var agent = new HttpProxyAgent("http://137.184.245.154:80");
 
+// initialize agents to make request to google translate API (bypass too many request error)
 const availableAgents = [
     new HttpProxyAgent("http://137.184.245.154:80"),
     new HttpProxyAgent("http://84.248.46.187:80"),
@@ -25,6 +26,7 @@ const availableAgents = [
     new HttpProxyAgent("http://102.165.4.52:8001"),
 ]
 
+// initialize hiragana converter
 const kuroshiro = new Kuroshiro()
 kuroshiro.init(new KuromojiAnalyzer())
 
@@ -52,6 +54,7 @@ router.get('/translate', async (req, res) => {
     var result;
     var proxyID = 0;
 
+    // function to get response from the google translate api
     const getResponseProxy = async (agent) => {
         response = await translate(data, {
             to: 'zh-cn',
@@ -60,6 +63,7 @@ router.get('/translate', async (req, res) => {
         return response;
     }
 
+    // try another proxy if the current one doesn't work
     while (proxyID < availableAgents.length) {
         try {
             const response = await getResponseProxy(availableAgents[proxyID]);
@@ -72,7 +76,6 @@ router.get('/translate', async (req, res) => {
         }
     }
     
-    console.log(result);
     res.send(result)
     }
 );
