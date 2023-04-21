@@ -134,26 +134,25 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
         }
     }, [currentLineIndex, convertedLines, lines]);
 
+    // translate lyrics when translate is set to true
     useEffect(() => {
         const getTranslatedLyrics = async () => {
             const connectedLyrics = lines.map(line => line.words).join('\n')
             console.log(connectedLyrics);
             var response;
             try {
+                // send a get request to the node backend
                 response = await axios.get('http://localhost:8080/convert/translate', {
                     params: {
                         data: connectedLyrics,
                     },
                 })
-                // return response.data
             } catch (error) {
                 console.log(error);
             }
+            console.log(response.data.text);
             var translated = response.data.text
-            console.log(translated);
             setTranslatedLines(translated.split("\n"));
-            // console.log(response.data.text.split("***"));
-            // return translatedLines;
         }
 
         if (window.localStorage.getItem('translate') === 'true') {
@@ -167,6 +166,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
 
 
     return (
+        // TODO: deal with un-synced lyrics
         <div className="lyrics-container-wrapper" style={{ backgroundImage: `url(${bg_img})` }}>
             <ToolBar />
             {hiragana ? 
