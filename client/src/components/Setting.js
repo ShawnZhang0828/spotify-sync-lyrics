@@ -5,7 +5,9 @@ import { useState } from "react";
 
 function Setting() {
 
+    // prevent both hiragana and translate are set to on
     const handleHiraganaChange = (event) => {
+        console.log('hiragana', event.target.checked);
         if (!translate && event.target.checked) {
             setHiragana(true)
             console.log(event.target.checked);
@@ -26,8 +28,8 @@ function Setting() {
         }
     }
 
-    const [hiragana, setHiragana] = useState(window.localStorage.getItem("hiragana"));
-    const [translate, setTranslate] = useState(window.localStorage.getItem("translate"));
+    const [hiragana, setHiragana] = useState(window.localStorage.getItem("hiragana") === 'true' ? true : false);
+    const [translate, setTranslate] = useState(window.localStorage.getItem("translate") === 'true' ? true : false);
 
     return (
         <Draggable handle='.handle'>
