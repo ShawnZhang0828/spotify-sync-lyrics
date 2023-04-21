@@ -85,6 +85,11 @@ function ToolBar() {
         setShowSetting(showSetting ? !showSetting : true)
     }
 
+    const handleExitClick = () => {
+        window.localStorage.clear()
+        window.localStorage.setItem('refresh-token', '1')
+    }
+
     const [showToolbar, setShowToolbar] = useState(false);
     const [locked, setLocked] = useState(false);
     const [playing, setPlaying] = useState(true);
@@ -102,7 +107,7 @@ function ToolBar() {
                 <ToolButton icon={faForward} onClick={handleNextClick}/>
                 <ToolButton icon={faGear} onClick={handleSettingClick}/>
                 {!locked ? <ToolButton icon={faLock} onClick={handleLockClick}/> : <ToolButton icon={faUnlock} onClick={handleUnlockClick}/>}
-                <ToolButton icon={faRightFromBracket}/>
+                <ToolButton icon={faRightFromBracket} onClick={handleExitClick}/>
             </div>
             {showSetting && <Setting />}
         </div>

@@ -150,7 +150,6 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             } catch (error) {
                 console.log(error);
             }
-            console.log(response.data.text);
             var translated = response.data.text
             setTranslatedLines(translated.split("\n"));
         }

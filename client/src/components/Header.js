@@ -39,7 +39,7 @@ const Header = ({ props }) => {
 
   return (
     // <h1>Spotify React {code ? <LoginButton onClick={logout} text="logout"/> : <LoginButton onClick={login} text="login"/>} </h1>
-    <h1>Spotify React {code ? <LoginButton onClick={logout} text="logout"/> : <LoginButton onClick={logout} text="login" href={LOGIN_URI}/>} </h1>
+    <h1>Spotify React {window.localStorage.getItem('access-token') ? <LoginButton onClick={logout} text="logout"/> : <LoginButton text="login" href={LOGIN_URI}/>} </h1>
   )
 }
 

@@ -183,10 +183,16 @@ function App() {
     return () => clearInterval(intervalId);
   }, [currentTime, lyrics, trackStartTime]);
 
+  useEffect(() => {
+    if (window.localStorage.getItem('refresh-token') === '1') {
+      setLyrics([]);
+    }
+  }, [window.localStorage.getItem('refresh-token')])
+
   // render page elements
   return (
     <div className="container">
-      {lyrics.length > 0 ? <Lyrics lines={lyrics} currentLineIndex={currentLineIndex} bg_img={track.trackImg}/> : <Header initToken={window.localStorage.getItem("token")}/>}
+      {lyrics.length > 0 ? <Lyrics lines={lyrics} currentLineIndex={currentLineIndex} bg_img={track.trackImg}/> : <Header />}
     </div>
   );
 }
