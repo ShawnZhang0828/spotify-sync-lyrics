@@ -7,22 +7,25 @@ div:empty {
 }
 
 .lyrics-line {
-    font-size: medium;
+    font-size: 95%;
+    padding: 4px 0 2px;
+    line-height: 15px;
+    text-align: center;
     width: 100%;
-    height: 19%;
     font-weight: 600;
     color: black;
 }
 
 .current-line {
-    font-size: larger;
+    padding: 6px 0 6px;
+    font-size: 140%;
     font-weight: 900;
     color: #7464b9;
-    text-shadow: 0.05em 0.05em #080611
+    text-shadow: 0.05em 0.05em #080611;
 }
 
 .far-line {
-    font-size: small;
+    font-size: 90%;
 }
 
 .lyrics-container-wrapper {
@@ -34,7 +37,7 @@ div:empty {
 }
 
 .lyrics-container {
-    padding-top: 5px;
+    padding-top: 7px;
 }
 
 .kanji-hiragana-wrapper {

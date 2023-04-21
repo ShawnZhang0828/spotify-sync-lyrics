@@ -195,7 +195,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                         const isFarLine = lineIndex < currentLineIndex - 1 ||  lineIndex > currentLineIndex + 1 ? "far-line" : "";
                         return <div key={index} 
                                     className={`lyrics-line ${isCurrentLine} ${isFarLine}`}>
-                                        {line.words}
+                                        <p>{line.words}</p>
                                 </div>
                         })
                     }

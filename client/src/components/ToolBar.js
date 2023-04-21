@@ -86,6 +86,7 @@ function ToolBar() {
     }
 
     const handleExitClick = () => {
+        // TODO: add more authentication-related logic
         window.localStorage.clear()
         window.localStorage.setItem('refresh-token', '1')
     }
