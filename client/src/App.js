@@ -69,7 +69,9 @@ function App() {
     } catch (error) {
       console.log(error);
       if (error.response.status === 401) {
+        window.localStorage.removeItem("code")
         window.localStorage.removeItem("access-token")
+        window.localStorage.removeItem("refresh-token")
       }
     }
   }

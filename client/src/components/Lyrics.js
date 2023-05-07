@@ -63,7 +63,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             var i = 0, j = 0;
             var currentKanjis = lines[currentLineIndex].words, 
                 currentHiraganas = convertedLines[currentLineIndex]
-            var kanjiRect, left, width;
+            var kanjiRect, left, width, top;
 
             // console.log("Kanji =>", currentKanjis, "\nHiragana =>", currentHiraganas);
             
@@ -75,6 +75,8 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                     // get the bounding box for the left Kanji character
                     kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                     left = kanjiRect.left;
+                    top = kanjiRect.top;
+                    console.log(kanjiRect.top)
                     // find where the converted characters ends
                     if (i === currentKanjis.length - 1) {           // special case where the last character is a Kanji
                         kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
@@ -91,12 +93,12 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
                             i++;
                             kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                             width = kanjiRect.right - left;
-                            spans.push(createHiraganaSegment(currentHiraganas.slice(j), left, width));
+                            spans.push(createHiraganaSegment(currentHiraganas.slice(j), left, width, top));
                             break;
                         } else {
                             kanjiRect = kanjiRefs.current[i].getBoundingClientRect();
                             width = kanjiRect.right - left;
-                            spans.push(createHiraganaSegment(currentHiraganas.slice(j, nextSameIndex), left, width));
+                            spans.push(createHiraganaSegment(currentHiraganas.slice(j, nextSameIndex), left, width, top));
                             j = nextSameIndex;
                             i++;
                             break;
@@ -108,18 +110,17 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             }
         }
 
-        const createHiraganaSegment = (text, left, width) => {
+        const createHiraganaSegment = (text, left, width, top) => {
             const center = (left + width/2);
             const span = (
                 <span
                   className="hiragana-segment"
                   style={{
                     display: 'inline-block',
-                    left: `${left}px`,
                     position: "absolute",
                     transform: `translateX(-50%)`,
-                    left: `${center}px`,
-                    whiteSpace: 'nowrap'
+                    left: `${center-126}px`,
+                    whiteSpace: 'nowrap',
                   }}>
                   {text}
                 </span>
@@ -136,6 +137,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
 
     // translate lyrics when translate is set to true
     useEffect(() => {
+        setTranslatedLines([]);
         const getTranslatedLyrics = async () => {
             const connectedLyrics = lines.map(line => line.words).join('\n')
             console.log(connectedLyrics);
@@ -166,41 +168,46 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
 
     return (
         // TODO: deal with un-synced lyrics
+        // style={{ backgroundImage: `url(${bg_img})` }}
         <div className="lyrics-container-wrapper" style={{ backgroundImage: `url(${bg_img})` }}>
             <ToolBar />
-            {hiragana ? 
-                (<div className="kanji-hiragana-wrapper">
-                    <div className="char-wrapper" id="hiragana-char-wrapper">
-                        {spanElements.map((span) => span)}
-                    </div>
-                    
-                    <div className="char-wrapper" id="kanji-char-wrapper">
-                        {lines[currentLineIndex].words.split('').map((char, index) => (
-                            <span key={index} ref={(ref) => (kanjiRefs.current[index] = ref)}>
-                            {char}
-                            </span>
-                        ))}
-                    </div>
-                </div>)
-             : translate ?
-                (<div className="lyrics-container" id="translation-wrapper">
-                    <div className="lyrics-line">{translatedLines[currentLineIndex]}</div>
-                    <div className="lyrics-line current-line">{lines[currentLineIndex].words}</div>
-                </div>)       
-             : 
-                (<div className="lyrics-container"> {
-                    displayedLines.map((line, index) => {
-                        const lineIndex = startIndex + index;
-                        const isCurrentLine = currentLineIndex === lineIndex ? "current-line" : "";
-                        const isFarLine = lineIndex < currentLineIndex - 1 ||  lineIndex > currentLineIndex + 1 ? "far-line" : "";
-                        return <div key={index} 
-                                    className={`lyrics-line ${isCurrentLine} ${isFarLine}`}>
-                                        <p>{line.words}</p>
-                                </div>
-                        })
-                    }
-                </div>)
-            }
+            <div id="img-lyrics-container">
+                <img src={bg_img} id="album-img"></img>
+                {hiragana ? 
+                    (<div className="kanji-hiragana-wrapper">
+                        <div className="char-wrapper" id="hiragana-char-wrapper">
+                            {spanElements.map((span) => span)}
+                        </div>
+                        
+                        <div className="char-wrapper" id="kanji-char-wrapper">
+                            {lines[currentLineIndex].words.split('').map((char, index) => (
+                                <span key={index} ref={(ref) => (kanjiRefs.current[index] = ref)}>
+                                {char}
+                                </span>
+                            ))}
+                        </div>
+                    </div>)
+                : translate ?
+                    (<div className="lyrics-container" id="translation-wrapper">
+                        <div className="lyrics-line">{translatedLines[currentLineIndex]}</div>
+                        <div className="lyrics-line current-line">{lines[currentLineIndex].words}</div>
+                    </div>)       
+                : 
+                    (<div className="lyrics-container"> {
+                        displayedLines.map((line, index) => {
+                            const lineIndex = startIndex + index;
+                            const isCurrentLine = currentLineIndex === lineIndex ? "current-line" : "";
+                            const isFarLine = lineIndex < currentLineIndex - 1 ||  lineIndex > currentLineIndex + 1 ? "far-line" : "";
+                            return <div key={index} 
+                                        className={`lyrics-line ${isCurrentLine} ${isFarLine}`}>
+                                            <p>{line.words}</p>
+                                    </div>
+                            })
+                        }
+                    </div>)
+                }
+            </div>
+            
         </div>
     )
 }

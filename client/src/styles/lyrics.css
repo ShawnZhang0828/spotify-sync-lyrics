@@ -1,31 +1,48 @@
 div {
     text-align: center;
+    align-items: center;
 }
 
-div:empty {
-    height: 20px;
+#img-lyrics-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+#album-img {
+    width: 80px;
+    height: auto;
+    border-radius: 50%;
+    animation: rotation 10s infinite linear;
+    background: linear-gradient(45deg, #2102eb, #99bfe7);
+    padding: 4px;
+}
+
+p:empty {
+    height: 16px;
 }
 
 .lyrics-line {
-    font-size: 95%;
+    font-size: 85%;
     padding: 4px 0 2px;
     line-height: 15px;
     text-align: center;
-    width: 100%;
     font-weight: 600;
     color: black;
 }
 
 .current-line {
     padding: 6px 0 6px;
-    font-size: 140%;
+    font-size: 120%;
     font-weight: 900;
     color: #7464b9;
     text-shadow: 0.05em 0.05em #080611;
 }
 
 .far-line {
-    font-size: 90%;
+    font-size: 70%;
 }
 
 .lyrics-container-wrapper {
@@ -37,14 +54,12 @@ div:empty {
 }
 
 .lyrics-container {
-    padding-top: 7px;
+    width: 70%;
+    text-align: center;
 }
 
 .kanji-hiragana-wrapper {
-    height: 100%;
-    width: 100%;
-    text-align: center;
-    align-items: center;
+    width: 70%;
 }
 
 .hiragana-segment {
@@ -53,22 +68,27 @@ div:empty {
 }
 
 #hiragana-char-wrapper {
+    top: 28%;
     position: absolute;
-    top: 30%;
 }
 
 #kanji-char-wrapper {
-    position: absolute;
-    top: 40%;
-    left: 0;
-    right: 0;
-    margin: auto;
-    font-size: x-large;
+    text-align: center;
+    height: fit-content;
+    font-size: large;
     font-weight: 900;
     color: #7464b9;
     text-shadow: 0.05em 0.05em #080611
 }
 
 #translation-wrapper {
-    padding-top: 7%;
 }
+
+@keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }

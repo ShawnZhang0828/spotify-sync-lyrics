@@ -1,0 +1,12 @@
+{
+  "name": "spotify-lyrics-sync",
+  "version": "0.1.0",
+  "description": "My project description",
+  "scripts": {
+    "start": "concurrently \"cd api && nodemon index.js\" \"cd client && npm start\""
+  },
+  "dependencies": {
+    "concurrently": "^6.5.1",
+    "nodemon": "^2.0.22"
+  }
+}

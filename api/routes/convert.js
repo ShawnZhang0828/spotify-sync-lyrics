@@ -96,7 +96,8 @@ router.get('/translate', async (req, res) => {
 
     const availableProxys = await fetchProxy();
     // try another proxy if the current one doesn't work
-    while (proxyID < availableProxys.length) {
+    while (proxyID < 10) {           // try 10 proxys only
+    // while (proxyID < availableProxys.length) {
         try {
             const response = await getResponseProxy(availableProxys[proxyID]);
             result = response;
@@ -108,6 +109,7 @@ router.get('/translate', async (req, res) => {
         }
     }
     
+    console.log(`Translation found by Proxy ${proxyID}`);
     res.send(result)
     }
 );

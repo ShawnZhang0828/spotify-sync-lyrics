@@ -1,5 +1,6 @@
 .popup-wrapper {
     padding-bottom: 3px;
+    top: 30px;
     position: fixed;
     z-index: 2;
     width: 40%;
