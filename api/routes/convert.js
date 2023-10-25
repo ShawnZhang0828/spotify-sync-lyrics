@@ -1,4 +1,3 @@
-
 const Kuroshiro = require("kuroshiro")
 const KuromojiAnalyzer = require("kuroshiro-analyzer-kuromoji")
 
@@ -11,23 +10,6 @@ const router = express.Router();
 const cors = require('cors');
 
 var HttpProxyAgent = require('http-proxy-agent');
-
-// var agent = new HttpProxyAgent("http://137.184.245.154:80");
-
-// initialize agents to make request to google translate API (bypass too many request error)
-// TODO: dynamically fetch available proxys
-// const availableAgents = [
-//     new HttpProxyAgent("http://137.184.245.154:80"),
-//     new HttpProxyAgent("http://84.248.46.187:80"),
-//     new HttpProxyAgent("http://4.233.217.172:80"),
-//     new HttpProxyAgent("http://45.92.108.112:80"),
-//     new HttpProxyAgent("http://185.162.251.76:80"),
-//     new HttpProxyAgent("http://161.97.93.15:80"),
-//     new HttpProxyAgent("http://34.75.202.63:80"),
-//     new HttpProxyAgent("http://203.57.51.53:80"),
-//     new HttpProxyAgent("http://139.99.135.214:80"),
-//     new HttpProxyAgent("http://102.165.4.52:8001"),
-// ]
 
 // initialize hiragana converter
 const kuroshiro = new Kuroshiro()
@@ -49,7 +31,6 @@ const fetchProxy = () => {
             if (info.eq(5).text() === 'yes') {
               const newProxyURL = `http://${info.eq(0).text()}:${info.eq(1).text()}`
               availableProxys.push(new HttpProxyAgent(newProxyURL))
-            //   console.log("adding new proxy");
             }
           })
           resolve(availableProxys);

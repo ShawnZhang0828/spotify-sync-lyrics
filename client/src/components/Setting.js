@@ -7,10 +7,8 @@ function Setting() {
 
     // prevent both hiragana and translate are set to on
     const handleHiraganaChange = (event) => {
-        console.log('hiragana', event.target.checked);
         if (!translate && event.target.checked) {
             setHiragana(true)
-            console.log(event.target.checked);
             window.localStorage.setItem("hiragana", event.target.checked)
         } else {
             setHiragana(false)
