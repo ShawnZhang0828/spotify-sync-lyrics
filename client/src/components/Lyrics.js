@@ -157,7 +157,6 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
 
         if (window.localStorage.getItem('translate') === 'true') {
             getTranslatedLyrics();
-                // setTranslatedLines(translatedLines);
         }
 
         setTranslate(window.localStorage.getItem('translate') === 'true');
