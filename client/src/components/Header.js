@@ -5,7 +5,7 @@ import '../styles/login.css'
 // const CLIENT_ID = "07f45b95ceac490ba0871336604107e0"
 // const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
 // const SCOPE = "user-read-currently-playing"
-const LOGIN_URI = "http://localhost:8080/auth/login"
+const LOGIN_URI = process.env.REACT_APP_SERVER_ADDRESS + "auth/login"
 // const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 // const RESPONSE_TYPE = "code"
 

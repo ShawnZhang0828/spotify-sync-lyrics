@@ -4,7 +4,6 @@ import ToolBar from "./ToolBar";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-
 function Lyrics({ lines, currentLineIndex, bg_img }) {
     var startIndex = Math.max(currentLineIndex - 2, 0);
     startIndex = Math.min(startIndex, lines.length - 6)
@@ -31,7 +30,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             const convertedLines = await Promise.all(
                 lines.map(async (line) => {
                     try {
-                        const response = await axios.get('http://localhost:8080/convert/hiragana', {
+                        const response = await axios.get(process.env.REACT_APP_SERVER_ADDRESS + 'convert/hiragana', {
                             params: {
                               data: line.words,
                             },
@@ -144,7 +143,7 @@ function Lyrics({ lines, currentLineIndex, bg_img }) {
             var response;
             try {
                 // send a get request to the node backend
-                response = await axios.get('http://localhost:8080/convert/translate', {
+                response = await axios.get(process.env.REACT_APP_SERVER_ADDRESS + 'convert/translate', {
                     params: {
                         data: connectedLyrics,
                     },

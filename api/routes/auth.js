@@ -3,16 +3,18 @@ const router = express.Router();
 const querystring = require("querystring");
 var request = require("request");
 const cors = require("cors");
+require('dotenv').config();
 
 const CLIENT_ID = "07f45b95ceac490ba0871336604107e0";
 const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8";
 const SCOPE = "user-read-currently-playing user-modify-playback-state";
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
-const LOGIN_REDIRECT = "http://localhost:8080/auth/callback";
+const LOGIN_REDIRECT = process.env.SERVER_ADDRESS + "auth/callback";
 const RESPONSE_TYPE = "code";
 
 // perform login via spotify api
 router.get("/login", function (req, res) {
+  console.log(`from server login - ${LOGIN_REDIRECT}`);
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
@@ -62,7 +64,7 @@ router.get("/callback", function (req, res) {
 
       // redirect back to the React fontend with requested access token and refresh token
       res.redirect(
-        "http://localhost:4000/?" +
+        process.env.CLIENT_ADDRESS + "?" +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token,

@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Lyrics from "./components/Lyrics";
 import axios from "axios";
-import { parse } from "@fortawesome/fontawesome-svg-core";
 
 // const CLIENT_ID = "07f45b95ceac490ba0871336604107e0"
 // const CLIENT_SECRET = "2896dd203a234606ab0e2ba2a2aa5ad8"
-const REFRESH_URL = "http://localhost:8080/auth/refresh_token/";
+const REFRESH_URL = process.env.REACT_APP_SERVER_ADDRESS + "auth/refresh_token/";
 
 function App() {
   // get track information about the currently playing track
@@ -123,7 +122,7 @@ function App() {
           keywords: `${track.artistName} ${track.trackName}`,
           type: 1,
         };
-        const songIdResponse = await axios.get("http://localhost:3000/search", {
+        const songIdResponse = await axios.get(process.env.REACT_APP_NETEASE_SERVER_ADDRESS + "search", {
           params: idRequestBody,
         });
         songId = songIdResponse.data.result.songs[0].id;
@@ -135,7 +134,7 @@ function App() {
       const lyricsRequestBody = {
         id: songId,
       };
-      const lyricsResponse = await axios.get("http://localhost:3000/lyric", {
+      const lyricsResponse = await axios.get(process.env.REACT_APP_NETEASE_SERVER_ADDRESS + "lyric", {
         params: lyricsRequestBody,
       });
       if (lyricsResponse !== undefined) {
@@ -144,6 +143,9 @@ function App() {
           .split("\n")
           .map((line) => parseLyricsLine(line));
         console.log(parsedLines);
+        if (validateLyrics(parsedLines)) {
+          setLyrics({ words: "Lyrics Not Available", startTimeMs: 0 }); // update lyrics
+        }
         setLyrics(parsedLines); // update lyrics
       } else {
         console.log(lyricsResponse);
@@ -161,6 +163,15 @@ function App() {
       return null;
     }
   };
+
+  const validateLyrics = (parsedLyrics) => {
+    for (var lyrics in parsedLyrics) {
+      if (!lyrics) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   // refresh token so that the user stays logged in
   const refreshToken = async () => {
