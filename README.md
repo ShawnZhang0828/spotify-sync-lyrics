@@ -16,19 +16,29 @@ This project is about making a widget mentioned above, but with extra features o
 
 ### Prerequisites
 * npm needs to be installed on your device
-`npm install npm@latest`
+```sh
+npm install npm@latest
+```
 * Chrome extension "Allow CORS" is required for your Chrome browser
 * Clone NeteaseCloudMusicApi from [https://github.com/Binaryify/NeteaseCloudMusicApi.git](https://github.com/Binaryify/NeteaseCloudMusicApi.git)
 
 ### Installation
 1. Clone the repo
-`git clone https://github.com/ShawnZhang0828/spotify-sync-lyrics.git`
+```sh
+git clone https://github.com/ShawnZhang0828/spotify-sync-lyrics.git`
+```
 2. Install NPM packages
-`npm install`
+```sh
+npm install
+```
 3. Start the NeteaseCloudMusicApi server
-`node app.js`
+```sh
+node app.js`
+```
 4. Open project's root folder. run the following command
-`npm start`
+```sh
+npm start
+```
 5. Start "Allow CORS" extension
 6. Install "Spotify Lyrics" as an app and adjust window size
 
