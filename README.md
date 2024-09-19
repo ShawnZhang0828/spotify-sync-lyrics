@@ -1,6 +1,6 @@
 <div align="center">
     <h3 align="center">Spotify Synchronized Lyrics</h3>
-    <img src="/resources/images/image.png" width="300" height="90">
+    <img src="/resources/images/app-screenshot.png" width="300" height="90">
 </div>
 
 ## About The Project
