@@ -14,7 +14,6 @@ const RESPONSE_TYPE = "code";
 
 // perform login via spotify api
 router.get("/login", function (req, res) {
-  console.log(`from server login - ${LOGIN_REDIRECT}`);
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
@@ -104,6 +103,11 @@ router.get("/refresh_token", function (req, res) {
 });
 
 // enable cors
-router.use(cors());
+router.use(
+  cors({
+    origin: "http://localhost:4000", // Allow only this origin
+    methods: "GET,POST", // Allowed methods
+  })
+);
 
 module.exports = router;

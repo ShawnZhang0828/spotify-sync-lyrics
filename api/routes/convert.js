@@ -95,7 +95,12 @@ router.get('/translate', async (req, res) => {
     }
 );
 
-// enable cors 
-router.use(cors());
+// enable cors
+router.use(
+  cors({
+    origin: "http://localhost:4000", // Allow only this origin
+    methods: "GET,POST", // Allowed methods
+  })
+);
 
 module.exports = router;
