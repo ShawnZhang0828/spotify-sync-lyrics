@@ -2,7 +2,7 @@ const Kuroshiro = require("kuroshiro");
 const KuromojiAnalyzer = require("kuroshiro-analyzer-kuromoji");
 
 const { translate } = require("@vitalets/google-translate-api");
-const request = require("request");
+const axios = require("axios");
 const cheerio = require("cheerio");
 
 const express = require("express");
@@ -26,10 +26,9 @@ const fetchProxy = () => {
       url: "https://free-proxy-list.net/",
     };
 
-    request.get(options, (error, response, body) => {
-      if (!error) {
-        const $ = cheerio.load(body);
-        const proxyWrappers = $('[class="table table-striped table-bordered"]')
+    axios.get(options.url).then(response => {
+      const $ = cheerio.load(response.data);
+      const proxyWrappers = $('[class="table table-striped table-bordered"]')
           .children("tbody")
           .children("tr");
         proxyWrappers.each((index, element) => {
@@ -43,11 +42,10 @@ const fetchProxy = () => {
           }
         });
         resolve(availableProxys);
-      } else {
-        console.log("fetch failed...");
-        reject(error);
-      }
-    });
+    }).catch(error => {
+      console.log("fetch proxies for translation failed...");
+      reject(error);
+    })
   });
 };
 

@@ -36,6 +36,10 @@ function App() {
           trackImg = track.trackImg;
         return { trackName, artistName, trackID, trackImg };
       } else {
+        // add handling for authentication failed error
+        if (response.data.error === 401) {
+
+        }
         return null;
       }
     } catch (error) {
@@ -103,7 +107,6 @@ function App() {
 
   // get lyrics of the current track
   const getLyrics = async () => {
-    // TODO: handle un-synced lyrics
     try {
       var songId;
       try {
@@ -120,7 +123,7 @@ function App() {
         );
         songId = songIdResponse.data.result.songs[0].id;
       } catch (error) {
-        console.error("Error when getting song ID: ", error);
+        console.error("Error when getting song ID from Netease. Check if Netease server is started correctly", error);
         throw new Error("Cannot get song ID.");
       }
       // get song lyrics by ID
@@ -215,7 +218,6 @@ function App() {
     };
 
     const intervalId = setInterval(async () => {
-      // setCurrentTime(Date.now() - trackStartTime);
       var progress = Date.now() - trackStartTime + currentTime - 500;
       if (track) {
         const index = lyrics.findIndex((line) => line.startTimeMs >= progress); // Find the index of the line with a start time greater than or equal to the current time
